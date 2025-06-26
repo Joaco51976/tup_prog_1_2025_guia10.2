@@ -1,157 +1,161 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp3
+namespace ConsoleApp1
 {
     internal class Program
     {
         static void Main(string[] args)
         {
             int[] numeros = new int[1000];
-            int cantidad = 0;
+            int cantNumeros = 0;
+            int cantidadIngresada = 0;
+
             int opcion;
 
             do
             {
-                Console.Clear();
-                Console.WriteLine("1 - Ingresar un número");
-                Console.WriteLine("2 - Ingresar varios números");
-                Console.WriteLine("3 - Mostrar Numero Máximo y Mínimo");
-                Console.WriteLine("4 - Mostrar Promedio");
-                Console.WriteLine("5 - Mostrar Cantidad de Números");
-                Console.WriteLine("6 - Ordenar y Mostrar");
-                Console.WriteLine("7 - Mostrar mayores al promedio");
-                Console.WriteLine("8 - Salir");
-                Console.Write("Opción: ");
+                Console.WriteLine("\n--- MENÚ ---");
+                Console.WriteLine("1. Ingresar un número");
+                Console.WriteLine("2. Ingresar varios números");
+                Console.WriteLine("3. Mostrar máximo y mínimo");
+                Console.WriteLine("4. Mostrar promedio");
+                Console.WriteLine("5. Mostrar cantidad ingresada");
+                Console.WriteLine("6. Ordenar y mostrar listado");
+                Console.WriteLine("7. Mostrar los que superan el promedio");
+                Console.WriteLine("0. Salir");
+                Console.Write("Elegí una opción: ");
 
-                if (!int.TryParse(Console.ReadLine(), out opcion))
-                {
-                    Console.WriteLine("Ingresá un número válido.");
-                    Console.ReadKey();
-                    continue;
-                }
+                opcion = int.Parse(Console.ReadLine());
+
                 switch (opcion)
                 {
                     case 1:
-                        if (cantidad < numeros.Length)
-                        {
-                            Console.Write("Ingresá un número: ");
-                            if (int.TryParse(Console.ReadLine(), out int num))
-                            {
-                                numeros[cantidad] = num;
-                                cantidad++;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Entrada no válida.");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Ya se ingresó el máximo de números.");
-                        }
+                        Console.WriteLine("Escriba el número:");
+                        numeros[cantidadIngresada] = Convert.ToInt32(Console.ReadLine());
+                        cantidadIngresada++;
                         break;
 
                     case 2:
-                        Console.Write("¿Cuántos números querés ingresar?: ");
-                        if (int.TryParse(Console.ReadLine(), out int cant))
+                        Console.WriteLine("¿Cuántos números desea ingresar?");
+                        int numerosIngresa = Convert.ToInt32(Console.ReadLine());
+
+                        for (int i = 0; i < numerosIngresa; i++)
                         {
-                            for (int i = 0; i < cant && cantidad < numeros.Length; i++)
-                            {
-                                Console.Write($"Número {i + 1}: ");
-                                if (int.TryParse(Console.ReadLine(), out int n))
-                                {
-                                    numeros[cantidad] = n;
-                                    cantidad++;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Entrada no válida, se salta.");
-                                }
-                            }
+                            Console.WriteLine("Ingrese un número:");
+                            numeros[cantidadIngresada] = Convert.ToInt32(Console.ReadLine());
+                            cantidadIngresada++;
                         }
                         break;
 
                     case 3:
-                        if (cantidad > 0)
+                        if (cantidadIngresada == 0)
                         {
-                            int max = numeros.Take(cantidad).Max();
-                            int min = numeros.Take(cantidad).Min();
-                            Console.WriteLine($"Máximo: {max}");
-                            Console.WriteLine($"Mínimo: {min}");
+                            Console.WriteLine("No se ingresaron números aún.");
                         }
                         else
                         {
-                            Console.WriteLine("No hay datos.");
+                            int max = numeros[0];
+                            int min = numeros[0];
+
+                            for (int i = 1; i < cantidadIngresada; i++)
+                            {
+                                if (numeros[i] > max) max = numeros[i];
+                                if (numeros[i] < min) min = numeros[i];
+                            }
+
+                            Console.WriteLine("Máximo: " + max);
+                            Console.WriteLine("Mínimo: " + min);
                         }
                         break;
 
                     case 4:
-                        if (cantidad > 0)
+                        if (cantidadIngresada == 0)
                         {
-                            double promedio = numeros.Take(cantidad).Average();
-                            Console.WriteLine($"Promedio: {promedio:F2}");
+                            Console.WriteLine("No se ingresaron números aún.");
                         }
                         else
                         {
-                            Console.WriteLine("No hay datos.");
+                            int suma = 0;
+                            for (int i = 0; i < cantidadIngresada; i++)
+                            {
+                                suma += numeros[i];
+                            }
+
+                            double promedio = (double)suma / cantidadIngresada;
+                            Console.WriteLine($"El promedio es: {promedio}");
                         }
                         break;
 
                     case 5:
-                        Console.WriteLine($"Total de números ingresados: {cantidad}");
+                        Console.WriteLine($"Cantidad de números ingresados: {cantidadIngresada}");
                         break;
 
                     case 6:
-                        if (cantidad > 0)
+                        if (cantidadIngresada == 0)
                         {
-                            var ordenados = numeros.Take(cantidad).OrderBy(x => x);
-                            Console.WriteLine("Números ordenados:");
-                            foreach (var item in ordenados)
-                                Console.Write($"{item} ");
-                            Console.WriteLine();
+                            Console.WriteLine("No se ingresaron números aún.");
                         }
                         else
                         {
-                            Console.WriteLine("No hay datos.");
+                            int[] copia = new int[cantidadIngresada];
+                            Array.Copy(numeros, copia, cantidadIngresada);
+                            Array.Sort(copia);
+
+                            Console.WriteLine("Listado ordenado:");
+                            for (int i = 0; i < copia.Length; i++)
+                            {
+                                Console.Write(copia[i] + " ");
+                            }
+                            Console.WriteLine();
                         }
                         break;
 
                     case 7:
-                        if (cantidad > 0)
+                        if (cantidadIngresada == 0)
                         {
-                            double prom = numeros.Take(cantidad).Average();
-                            Console.WriteLine($"Promedio: {prom:F2}");
-                            Console.WriteLine("Números que superan el promedio:");
-                            foreach (var x in numeros.Take(cantidad))
-                            {
-                                if (x > prom)
-                                    Console.Write($"{x} ");
-                            }
-                            Console.WriteLine();
+                            Console.WriteLine("No se ingresaron números aún.");
                         }
                         else
                         {
-                            Console.WriteLine("No hay datos.");
+                            int suma = 0;
+                            for (int i = 0; i < cantidadIngresada; i++)
+                            {
+                                suma += numeros[i];
+                            }
+
+                            double promedio = (double)suma / cantidadIngresada;
+
+                            Console.WriteLine($"Promedio: {promedio}");
+                            Console.WriteLine("Números que superan el promedio:");
+
+                            for (int i = 0; i < cantidadIngresada; i++)
+                            {
+                                if (numeros[i] > promedio)
+                                {
+                                    Console.Write(numeros[i] + " ");
+                                }
+                            }
+                            Console.WriteLine();
                         }
                         break;
 
-                    case 8:
-                        Console.WriteLine("Saliendo del programa...");
+                    case 0:
+                        Console.WriteLine("Programa finalizado.");
                         break;
 
                     default:
-                        Console.WriteLine("Opción no válida.");
+                        Console.WriteLine("Opción inválida.");
                         break;
                 }
 
-                Console.WriteLine("\nPresioná una tecla para continuar...");
-                Console.ReadKey();
-
             } while (opcion != 0);
+
         }
     }
 }
